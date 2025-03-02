@@ -1,0 +1,56 @@
+		<!-- Sidebar -->
+		<div class="sidebar sidebar-style-2" data-background-color="dark2">			
+			<div class="sidebar-wrapper scrollbar scrollbar-inner">
+				<div class="sidebar-content">
+
+					
+					<ul class="nav nav-primary">
+						
+						<li class="nav-item">
+							<a href="/index.html">
+								<i class="fas fa-home"></i>
+								<span class="sub-item">Dashboard</span>
+							</a>
+						</li>
+						<li class="nav-item">
+							<a href="/maps-jqvmap.html">
+								<i class="fas fa-map"></i>
+								<span class="sub-item">Potential Location</span>
+							</a>
+						</li>
+						<li class="nav-item {% if 'team' in segment %} active {% endif %}">
+							<a data-toggle="collapse" href="#team">
+								<i class="fas fa-users"></i>
+								<p>Team Members</p>
+								<span class="caret"></span>
+							</a>
+							<div class="collapse {% if 'team-' in segment %} show {% endif %}" id="team">
+								<ul class="nav nav-collapse">
+									<li class="{% if 'team-hassaan' in segment %} active {% endif %}">
+										<a href="https://www.linkedin.com/in/hassaanahmed04/" target="_blank">
+											<span class="sub-item">Hassaan Ahmed</span>
+										</a>
+									</li>
+									<li class="{% if 'team-ureed' in segment %} active {% endif %}">
+										<a href="https://www.linkedin.com/in/ureed-hussain" target="_blank">
+											<span class="sub-item">Ureed Hussain</span>
+										</a>
+									</li>
+									<li class="{% if 'team-danial' in segment %} active {% endif %}">
+										<a href="https://www.linkedin.com/in/danial-ahmed" target="_blank">
+											<span class="sub-item">Danial Ahmed</span>
+										</a>
+									</li>
+								</ul>
+							</div>
+						</li>
+						
+						
+						
+					</ul>
+				
+				</div>
+			</div>
+		</div>
+        <!-- End Sidebar -->
+        

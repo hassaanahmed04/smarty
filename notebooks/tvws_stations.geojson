@@ -1,0 +1,106 @@
+{
+    "type": "FeatureCollection",
+    "features": [
+        {
+            "type": "Feature",
+            "properties": {
+                "Cluster": "Lesotho_tvws_0",
+                "Available Channels": [
+                    41,
+                    25,
+                    30,
+                    66,
+                    58
+                ],
+                "Interference": "Low",
+                "Elevation": 881.0,
+                "Population": 39085,
+                "Density": 26.83,
+                "TVWS Range (km)": 30
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    27.512340996047893,
+                    -29.65557971538073
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "Cluster": "Lesotho_tvws_1",
+                "Available Channels": [
+                    54,
+                    25,
+                    41,
+                    30,
+                    66
+                ],
+                "Interference": "Low",
+                "Elevation": 264.0,
+                "Population": 39085,
+                "Density": 26.83,
+                "TVWS Range (km)": 30
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    28.668014521889845,
+                    -29.537868284843338
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "Cluster": "Lesotho_tvws_2",
+                "Available Channels": [
+                    45,
+                    58,
+                    30,
+                    66,
+                    41
+                ],
+                "Interference": "Low",
+                "Elevation": 1914.0,
+                "Population": 39085,
+                "Density": 26.83,
+                "TVWS Range (km)": 30
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    28.020362836923173,
+                    -28.989643973734843
+                ]
+            }
+        },
+        {
+            "type": "Feature",
+            "properties": {
+                "Cluster": "Lesotho_tvws_3",
+                "Available Channels": [
+                    45,
+                    58,
+                    50,
+                    22,
+                    66,
+                    30
+                ],
+                "Interference": "Low",
+                "Elevation": 1021.0,
+                "Population": 39085,
+                "Density": 26.83,
+                "TVWS Range (km)": 30
+            },
+            "geometry": {
+                "type": "Point",
+                "coordinates": [
+                    27.989827226337635,
+                    -30.179441298099988
+                ]
+            }
+        }
+    ]
+}

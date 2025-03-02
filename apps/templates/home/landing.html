@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en" class="no-js">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Smarty</title>
+    <link href="https://fonts.googleapis.com/css?family=IBM+Plex+Sans:400,600" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='assets/dist/css/style.css') }}">
+    <script src="https://unpkg.com/animejs@3.0.1/lib/anime.min.js"></script>
+    <script src="https://unpkg.com/scrollreveal@4.0.0/dist/scrollreveal.min.js"></script>
+</head>
+<body class="is-boxed has-animations">
+    <div class="body-wrap">
+        <header class="site-header">
+            <div class="container">
+                <div class="site-header-inner">
+                    <div class="brand header-brand">
+                        <h1 class="m-0">
+                            <a href="#">
+                                <img class="header-logo-image" src="{{ url_for('static', filename='assets/dist/images/logo.svg') }}" alt="Logo">
+                            </a>
+                        </h1>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main>
+            <section class="hero">
+                <div class="container">
+                    <div class="hero-inner">
+                        <div class="hero-copy">
+                            <h3 class="hero-title mt-0">Smarty</h3>
+                            <h1 class="hero-title mt-0">AI-Driven Connectivity for Underserved Regions</h1>
+                            <p class="hero-paragraph">Our solution leverages machine learning to optimize the placement of TVWS base stations, enhancing connectivity for schools and public services in rural and underserved areas. The result: cost-effective, scalable, and resilient networks.</p>
+                            <div class="hero-cta">
+                                <a class="button button-primary" href="/dashboard">Explore our Solution</a>
+                                <a class="button" href="https://www.linkedin.com/in/hassaanahmed04/">Get in Touch</a>
+                            </div>
+                        </div>
+                        <div class="hero-figure anime-element">
+                            <svg class="placeholder" width="528" height="396" viewBox="0 0 528 396">
+                                <rect width="528" height="396" style="fill:transparent;" />
+                            </svg>
+                            <div class="hero-figure-box hero-figure-box-01" data-rotation="45deg"></div>
+                            <div class="hero-figure-box hero-figure-box-02" data-rotation="-45deg"></div>
+                            <div class="hero-figure-box hero-figure-box-03" data-rotation="0deg"></div>
+                            <div class="hero-figure-box hero-figure-box-04" data-rotation="-135deg"></div>
+                            <div class="hero-figure-box hero-figure-box-05"></div>
+                            <div class="hero-figure-box hero-figure-box-06"></div>
+                            <div class="hero-figure-box hero-figure-box-07"></div>
+                            <div class="hero-figure-box hero-figure-box-08" data-rotation="-22deg"></div>
+                            <div class="hero-figure-box hero-figure-box-09" data-rotation="-52deg"></div>
+                            <div class="hero-figure-box hero-figure-box-10" data-rotation="-50deg"></div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        
+            <section class="features section">
+                <div class="container">
+                    <div class="features-inner section-inner has-bottom-divider">
+                        <div class="features-wrap">
+                            <div class="feature text-center is-revealing">
+                                <div class="feature-inner">
+                                    <div class="feature-icon">
+                                        <img src="{{ url_for('static', filename='assets/dist/images/feature-icon-01.svg') }}" alt="Feature 01">
+                                    </div>
+                                    <h4 class="feature-title mt-24">Optimized TVWS Base Station Placement</h4>
+                                    <p class="text-sm mb-0">Using machine learning algorithms, our solution optimizes the placement of TVWS base stations, ensuring coverage for remote schools and public services. This boosts network performance and reduces deployment costs.</p>
+                                </div>
+                            </div>
+                            <div class="feature text-center is-revealing">
+                                <div class="feature-inner">
+                                    <div class="feature-icon">
+                                        <img src="{{ url_for('static', filename='assets/dist/images/feature-icon-02.svg') }}" alt="Feature 02">
+                                    </div>
+                                    <h4 class="feature-title mt-24">Predictive Maintenance for Service Resilience</h4>
+                                    <p class="text-sm mb-0">Our AI model predicts network failures and interference, allowing for proactive maintenance and ensuring uninterrupted service delivery to schools and healthcare facilities in underserved areas.</p>
+                                </div>
+                            </div>
+                            <div class="feature text-center is-revealing">
+                                <div class="feature-inner">
+                                    <div class="feature-icon">
+                                        <img src="{{ url_for('static', filename='assets/dist/images/feature-icon-03.svg') }}" alt="Feature 03">
+                                    </div>
+                                    <h4 class="feature-title mt-24">AI-Based Recommendations for Optimization</h4>
+                                    <p class="text-sm mb-0">Using AI-driven recommendations, our system suggests actionable improvements to optimize network performance and minimize costs based on predicted failures and network conditions.</p>
+                                </div>
+                            </div>
+                            <div class="feature text-center is-revealing">
+                                <div class="feature-inner">
+                                    <div class="feature-icon">
+                                        <img src="{{ url_for('static', filename='assets/dist/images/feature-icon-04.svg') }}" alt="Feature 04">
+                                    </div>
+                                    <h4 class="feature-title mt-24">Cost-Efficient Network Infrastructure</h4>
+                                    <p class="text-sm mb-0">Our solution models low-cost, scalable network architectures that can be deployed efficiently in rural areas, reducing the cost of connectivity and enabling more widespread access to digital services.</p>
+                                </div>
+                            </div>
+                            <div class="feature text-center is-revealing">
+                                <div class="feature-inner">
+                                    <div class="feature-icon">
+                                        <img src="{{ url_for('static', filename='assets/dist/images/feature-icon-05.svg') }}" alt="Feature 05">
+                                    </div>
+                                    <h4 class="feature-title mt-24">AI-Powered Network Design</h4>
+                                    <p class="text-sm mb-0">Leverage demographic, elevation, and satellite data to design network infrastructure that aligns with community needs, ensuring maximum efficiency and service quality for underserved populations.</p>
+                                </div>
+                            </div>
+                            <div class="feature text-center is-revealing">
+                                <div class="feature-inner">
+                                    <div class="feature-icon">
+                                        <img src="{{ url_for('static', filename='assets/dist/images/feature-icon-06.svg') }}" alt="Feature 06">
+                                    </div>
+                                    <h4 class="feature-title mt-24">Scalable and Resilient Networks</h4>
+                                    <p class="text-sm mb-0">Our solution is designed to scale as network needs grow, ensuring that the connectivity infrastructure remains resilient, even in the face of changing demands and environmental conditions.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        
+            
+
+        <footer class="site-footer">
+            <div class="container">
+                <div class="site-footer-inner">
+                    <div class="brand footer-brand">
+                        <a href="#">
+                            <img class="header-logo-image" src="{{ url_for('static', filename='assets/dist/images/logo.svg') }}" alt="Logo">
+                        </a>
+                    </div>
+                   
+                    <div class="footer-copyright">&copy; 2025, all rights reserved</div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script src="{{ url_for('static', filename='assets/dist/js/main.min.js') }}"></script>
+</body>
+</html>

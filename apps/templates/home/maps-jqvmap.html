@@ -1,0 +1,515 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Maps {% endblock %}
+
+<!-- Specific Page CSS goes HERE -->
+{% block stylesheets %}
+  <!-- Leaflet map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      display: flex;
+      margin: 0;
+      padding: 0;
+    }
+/* Container for the buttons */
+.button-container {
+  display: flex;
+  justify-content: center; /* Center buttons horizontally */
+  align-items: center;
+  margin-bottom: 20px; /* Space between buttons and map */
+  padding: 20px;
+  background-color: #ffffff00;
+  border-radius: 15px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  gap: 25px;
+  flex-wrap: wrap; /* Allow wrapping for small screens */
+  max-width: 100%;
+}
+
+/* Style for the select dropdowns and labels */
+.button-container select,
+.button-container input {
+  font-size: 16px;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  background-color: #ffffff;
+  outline: none;
+  width: 200px; /* Ensures consistent width for select elements */
+  transition: all 0.3s ease;
+  margin: 5px 0; /* Space between input and label */
+}
+
+.button-container label {
+  font-size: 16px;
+  font-weight: bold;
+  padding: 5px;
+  border-radius: 5px;
+  color: #333;
+  margin-bottom: 5px;
+}
+
+.button-container select:hover, 
+.button-container select:focus,
+.button-container input:focus,
+.button-container label:hover {
+  border-color: #007bff;
+  box-shadow: 0px 0px 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Style for buttons */
+.button-container button {
+  padding: 12px 25px;
+  font-size: 16px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-top: 10px; /* Added margin to the top of the button */
+}
+
+.button-container button:hover {
+  background-color: #0056b3;
+  transform: translateY(-2px);
+}
+
+.button-container button:active {
+  transform: translateY(1px); /* Slight push when clicked */
+}
+
+/* Add a smooth hover effect for input and select elements */
+.button-container select:focus, 
+.button-container button:hover,
+.button-container input:focus {
+  border-color: #0056b3;
+}
+
+/* Make sure the layout adapts on smaller screens */
+@media (max-width: 768px) {
+  .button-container {
+    flex-direction: column;
+    gap: 20px; /* Increase space between items when stacked */
+    padding: 15px;
+  }
+
+  .button-container select,
+  .button-container input,
+  .button-container button {
+    width: 100%; /* Make the inputs full width on smaller screens */
+  }
+}
+
+.card-title {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.card-category {
+  font-size: 16px;
+  color: #555;
+}
+.modal {
+  display: none;
+  position: fixed;
+  z-index: 1000;
+  left: 0;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+
+.modal-content {
+  background-color: white;
+  margin: 15% auto;
+  padding: 20px;
+  border-radius: 10px;
+  width: 50%;
+}
+
+.close {
+  float: right;
+  font-size: 28px;
+  cursor: pointer;
+}
+
+  </style>
+{% endblock stylesheets %}
+
+{% block content %}
+  <div class="content">
+    <div class="row">
+      <div class="col-md-12">
+        <div class="card card-transparent">
+          <div class="card-header text-center">
+            <h4 class="card-title">TVWS Signal Simulation Map</h4>
+            <p class="card-category">Interactive map of TVWS signal coverage, schools, towers, and more.</p>
+          </div>
+          <div class="card-body">
+            <!-- Buttons Above the Map -->
+            <div class="button-container">
+              <div>
+                <label for="interference">Interference Level:</label>
+                <select id="interference">
+                  <option value="All">All</option>
+                  <option value="Low">Low</option>
+                  <option value="Medium">Medium</option>
+                  <option value="High">High</option>
+                </select>
+              </div>
+              <div>
+                <label for="dataType">Select Data Type:</label>
+                <select id="dataType" multiple>
+                  <option value="schools">Schools</option>
+                  <option value="towers">Towers</option>
+                  <option value="tvws">TVWS</option>
+                  <option value="spectrum">Spectrum</option>
+                  <option value="all">All</option>
+                </select>
+              </div>
+			  <div>
+				<label for="minSignal">Min Signal (dBm):</label>
+				<input type="number" id="minSignal" value="-100">
+			  </div>
+			
+			  <div>
+				<label for="maxSignal">Max Signal (dBm):</label>
+				<input type="number" id="maxSignal" value="0">
+			  </div>
+              <button onclick="applyFilters()">Apply Filters</button>
+            </div>
+
+            <div class="col-md-10 ml-auto mr-auto">
+              <div class="mapcontainer">
+                <div id="map" class="vmap" style="height: 400px"></div>
+              </div>
+            </div>
+			<div id="clusterModal" class="modal">
+				<div class="modal-content">
+				  <span id="closeModal" class="close">&times;</span>
+				  <h2 id="modalTitle"></h2>
+				  <div id="modalBody"></div>
+				</div>
+			  </div>
+			  
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE -->
+{% block javascripts %}
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+
+  <!-- Your map initialization and data loading scripts -->
+  <script>
+    // Initialize Leaflet map
+    var map = L.map('map').setView([0, 0], 2); // Default view
+
+    // Add the CartoDB DarkMatter tile layer
+    var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+      subdomains: 'abcd',
+      maxZoom: 20
+    }).addTo(map);
+
+    var spectrumData = [];
+    var markersLayer = L.layerGroup().addTo(map);
+    var schoolsData = [];
+    var schoolsLayer = L.layerGroup().addTo(map);
+    var towersData = [];
+    var towersLayer = L.layerGroup().addTo(map);
+	var tvwsLayer = L.layerGroup().addTo(map);
+
+	var locations =[]
+    // Initialize an empty array to hold locations
+	fetch('/geojson_data')
+  .then(response => response.json())  // Parse the JSON response
+  .then(data => {
+    // Ensure data is loaded and populate the locations array
+    data.forEach(item => {
+      const location = {
+        name: item.cluster,  // Use the 'Cluster' field as the name
+        lat: item.latitude,  // Latitude from the response
+        lon: item.longitude,
+		affected_schools:item.affected_schools // Longitude from the response
+      };
+      
+      // Add the location to the locations array
+      locations.push(location);
+    });
+
+    // Log the populated locations array to check
+    console.log(locations); // This will show the populated data in the console
+
+    // Now call loadTVWS() after data is successfully fetched
+    loadTVWS();
+  })
+  .catch(error => {
+    // Handle any errors that might occur during the fetch
+    console.error('Error fetching geojson data:', error);
+  });
+
+  function loadTVWS() {
+  tvwsLayer.clearLayers();
+
+  locations.forEach(function (location) {
+    var marker = L.marker([location.lat, location.lon]).addTo(tvwsLayer);
+    marker.bindPopup(location.name,location.affected_schools);
+
+    marker.on("click", function () {
+      fetchClusterData(location.name);
+    });
+
+    let initialRadius = 1000;
+    let maxRadius = 30000;
+    let radius = initialRadius;
+    let expanding = true;
+
+    var coverageCircle = L.circle([location.lat, location.lon], {
+      color: "blue",
+      fillColor: "blue",
+      fillOpacity: 0.3,
+      radius: radius,
+    }).addTo(tvwsLayer);
+
+    setInterval(function () {
+      if (expanding) {
+        radius += 2000;
+        if (radius >= maxRadius) expanding = false;
+      } else {
+        radius -= 2000;
+        if (radius <= initialRadius) expanding = true;
+      }
+      coverageCircle.setRadius(radius);
+    }, 200);
+  });
+}
+function fetchClusterData(clusterName) {
+  fetch(`/clusters?cluster=${clusterName}`)
+    .then(response => response.json())
+    .then(data => {
+      if (data[clusterName]) {
+        openModal(clusterName, data[clusterName]);
+      } else {
+        alert("No data available for this cluster.");
+      }
+    })
+    .catch(error => console.error("Error fetching cluster data:", error));
+}
+
+function openModal(clusterName, data) {
+  const modal = document.getElementById("clusterModal");
+  const modalTitle = document.getElementById("modalTitle");
+  const modalBody = document.getElementById("modalBody");
+
+  modalTitle.innerText = `Station Name: ${clusterName}`;
+  modalBody.innerHTML = `<canvas id="chart"></canvas>`; // Clear previous chart
+
+  const ctx = document.getElementById("chart").getContext("2d");
+  
+  // Extract data for the chart
+  const dates = data.map(entry => entry.date);
+  const signalStrength = data.map(entry => entry.signal_strength_dbm);
+  const spectrumUtilization = data.map(entry => entry.spectrum_utilization);
+  const temperature = data.map(entry => entry.temperature_c);
+  const failureRate = data.map(entry => entry.failure_rate);
+
+  new Chart(ctx, {
+    type: "bar", // Multibar Chart
+    data: {
+      labels: dates,
+      datasets: [
+        {
+          label: "Signal Strength (dBm)",
+          data: signalStrength,
+          backgroundColor: "rgba(54, 162, 235, 0.6)",
+          borderColor: "rgba(54, 162, 235, 1)",
+          borderWidth: 1,
+          type: "line", // Line chart overlay
+        },
+        {
+          label: "Spectrum Utilization (%)",
+          data: spectrumUtilization,
+          backgroundColor: "rgba(255, 99, 132, 0.6)",
+          borderColor: "rgba(255, 99, 132, 1)",
+          borderWidth: 1,
+        },
+        {
+          label: "Temperature (°C)",
+          data: temperature,
+          backgroundColor: "rgba(255, 206, 86, 0.6)",
+          borderColor: "rgba(255, 206, 86, 1)",
+          borderWidth: 1,
+          type: "line",
+        },
+        {
+          label: "Failure Rate (%)",
+          data: failureRate,
+          backgroundColor: "rgba(75, 192, 192, 0.6)",
+          borderColor: "rgba(75, 192, 192, 1)",
+          borderWidth: 1,
+        },
+      ],
+    },
+    options: {
+      responsive: true,
+      scales: {
+        x: { stacked: false },
+        y: { stacked: false },
+      },
+    },
+  });
+
+  modal.style.display = "block";
+}
+
+// Close modal function
+document.getElementById("closeModal").addEventListener("click", function () {
+  document.getElementById("clusterModal").style.display = "none";
+});
+
+    // Load schools and towers data
+    function loadSchools() {
+      fetch('/schools')
+        .then(response => response.json())
+        .then(data => {
+          schoolsData = data;
+          updateSchoolsMarkers();
+        })
+        .catch(error => console.error('Error loading school data:', error));
+    }
+
+    function loadTowers() {
+      fetch('/towers')
+        .then(response => response.json())
+        .then(data => {
+          towersData = data;
+          updateTowersMarkers();
+        })
+        .catch(error => console.error('Error loading tower data:', error));
+    }
+
+    function loadData() {
+      fetch('/data')
+        .then(response => response.json())
+        .then(data => {
+          spectrumData = data;
+          updateSpectrumMarkers();
+        })
+        .catch(error => console.error('Error loading data:', error));
+    }
+
+    function updateSchoolsMarkers() {
+      schoolsLayer.clearLayers();
+
+      schoolsData.forEach(function (school) {
+        var marker = L.circleMarker([school.latitude, school.longitude], {
+          color: "grey", radius: 1
+        }).addTo(schoolsLayer);
+
+        marker.bindPopup(`
+          <b>School Name:</b> ${school.name}<br>
+        `);
+      });
+    }
+
+    function updateTowersMarkers() {
+      towersLayer.clearLayers();
+
+      towersData.forEach(function (tower) {
+        var marker = L.marker([tower.latitude, tower.longitude], {
+          icon: L.divIcon({className: 'tower-icon', html: '📡'})
+        }).addTo(towersLayer);
+
+        marker.bindPopup(`
+          <b>Radio Type:</b> ${tower.type}<br>
+          <b>Location:</b> Lat: ${tower.latitude}, Lon: ${tower.longitude}
+        `);
+      });
+    }
+
+    function updateSpectrumMarkers() {
+		markersLayer.clearLayers();
+
+var minSignal = parseFloat(document.getElementById("minSignal").value);
+var maxSignal = parseFloat(document.getElementById("maxSignal").value);
+var selectedInterference = document.getElementById("interference").value;
+
+spectrumData.forEach(function (point) {
+	if (point.signal_strength < minSignal || point.signal_strength > maxSignal) return;
+	if (selectedInterference !== "All" && point.interference_level !== selectedInterference) return;
+
+	let color = point.interference_level === "High" ? 'red' :
+				point.interference_level === "Medium" ? 'orange' : 'green';
+
+	var marker = L.circleMarker([point.latitude, point.longitude], {
+		color: color,
+		radius: 5,
+		fillColor: color,
+		fillOpacity: 0.7
+	}).addTo(markersLayer);
+
+	marker.bindPopup(`
+		<b>Signal Strength:</b> ${point.signal_strength} dBm<br>
+		<b>Interference Level:</b> ${point.interference_level}<br>
+		<b>Available Channels:</b> ${point.available_channels}<br>
+		<b>Occupied Channels:</b> ${point.occupied_channels}
+	`);
+});
+    }
+
+    function applyFilters() {
+      markersLayer.clearLayers();
+      towersLayer.clearLayers();
+      schoolsLayer.clearLayers();
+      tvwsLayer.clearLayers();
+
+      var selectedTypes = Array.from(document.getElementById('dataType').selectedOptions)
+                                  .map(option => option.value);
+
+      if (selectedTypes.includes('schools')) {
+        schoolsLayer.addTo(map);
+        updateSchoolsMarkers();
+      }
+
+      if (selectedTypes.includes('towers')) {
+        towersLayer.addTo(map);
+        updateTowersMarkers();
+      }
+
+      if (selectedTypes.includes('tvws')) {
+        tvwsLayer.addTo(map);
+        loadTVWS();
+      }
+
+      if (selectedTypes.includes('spectrum')) {
+        markersLayer.addTo(map);
+        updateSpectrumMarkers();
+      }
+
+      if (selectedTypes.includes('all') || selectedTypes.length === 0) {
+        schoolsLayer.addTo(map);
+        towersLayer.addTo(map);
+        tvwsLayer.addTo(map);
+        markersLayer.addTo(map);
+        updateSchoolsMarkers();
+        updateTowersMarkers();
+        updateSpectrumMarkers();
+        loadTVWS();
+      }
+    }
+
+    loadSchools();
+    loadTowers();
+    loadData();
+    loadTVWS();
+  </script>
+{% endblock javascripts %}

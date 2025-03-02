@@ -1,0 +1,585 @@
+{% extends "layouts/base.html" %}
+
+{% block title %} Dashboard {% endblock %} 
+
+<!-- Specific Page CSS goes HERE  -->
+{% block stylesheets %}{% endblock stylesheets %}
+
+{% block content %}
+			
+	<div class="content">
+		<div class="panel-header bg-primary-gradient">
+			<div class="page-inner py-5">
+				<div class="d-flex align-items-left align-items-md-center flex-column flex-md-row">
+					<div>
+						<h2 class="text-white pb-2 fw-bold">TVWS Network Dashboard</h2>
+						<h5 class="text-white op-7 mb-2">AI-driven Optimization & Monitoring</h5>
+					</div>
+					<div class="ml-md-auto py-2 py-md-0">
+						<a href="/maps-jqvmap.html" class="btn btn-white btn-border btn-round mr-2">Manage Stations</a>
+						
+					</div>
+				</div>
+			</div>
+		</div>
+		<div class="page-inner mt--5">
+			<div class="row mt--2">
+				
+				<div class="col-sm-6 col-md-4">
+					<div class="card card-stats card-primary card-round">
+						<div class="card-body">
+							<div class="row">
+								<div class="col-5">
+									<div class="icon-big text-center">
+										<i class="flaticon-users"></i>
+									</div>
+								</div>
+								<div class="col-7 col-stats">
+									<div class="numbers">
+										<p class="card-category">Tvws Stations</p>
+										<h4 class="card-title"></h4>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6 col-md-4">
+					<div class="card card-stats card-info card-round">
+						<div class="card-body">
+							<div class="row">
+								<div class="col-5">
+									<div class="icon-big text-center">
+										<i class="flaticon-interface-6"></i>
+									</div>
+								</div>
+								<div class="col-7 col-stats">
+									<div class="numbers">
+										<p class="card-category">Schools Covered</p>
+										<h4 class="card-title"></h4>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="col-sm-6 col-md-4">
+					<div class="card card-stats card-success card-round">
+						<div class="card-body ">
+							<div class="row">
+								<div class="col-5">
+									<div class="icon-big text-center">
+										<i class="flaticon-analytics"></i>
+									</div>
+								</div>
+								<div class="col-7 col-stats">
+									<div class="numbers">
+										<p class="card-category">Expected Cost</p>
+										<h4 class="card-title"></h4>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card">
+						<div class="card-header">
+							<div class="card-head-row">
+								<div class="card-title">Predicted interference</div>
+								<div class="card-tools">
+									<a href="#" class="btn btn-info btn-border btn-round btn-sm mr-2">
+										<span class="btn-label">
+											<i class="fa fa-pencil"></i>
+										</span>
+										Export
+									</a>
+									<a href="#" class="btn btn-info btn-border btn-round btn-sm">
+										<span class="btn-label">
+											<i class="fa fa-print"></i>
+										</span>
+										Print
+									</a>
+								</div>
+							</div>
+						</div>
+						<div class="card-body">
+							<div class="chart-container" style="min-height: 375px">
+								<canvas id="statisticsChart"></canvas>
+							</div>
+							<div id="myChartLegend"></div>
+						</div>
+					</div>
+				</div>
+				
+				
+			</div>
+			<div class="row">
+				<div class="col-md-12">
+					<div class="card">
+						<div class="card-header">
+							<div class="card-head-row">
+								<div class="card-title">Predicted Failure</div>
+								<div class="card-tools">
+									<!-- Cluster Select Dropdown -->
+									<select id="clusterSelect" class="form-control" style="width: 200px; margin-top: 5px;">
+										<option value="">Select Cluster</option>
+									</select>
+									<a href="#" class="btn btn-info btn-border btn-round btn-sm mr-2">
+										<span class="btn-label">
+											<i class="fa fa-pencil"></i>
+										</span>
+										Export
+									</a>
+									<a href="#" class="btn btn-info btn-border btn-round btn-sm">
+										<span class="btn-label">
+											<i class="fa fa-print"></i>
+										</span>
+										Print
+									</a>
+									<!-- New AI Recommendations Button -->
+									<a href="#" class="btn btn-info btn-border btn-round btn-sm" id="ai-recommendations-btn">
+										<span class="btn-label">
+											<i class="fa fa-lightbulb"></i>
+										</span>
+										AI Recommendations
+									</a>
+								</div>
+							</div>
+						</div>
+						<div class="card-body">
+							<div class="chart-container" style="min-height: 375px">
+								<canvas id="failureRateChart"></canvas>
+							</div>
+							<div id="myChartLegend"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<!-- Modal -->
+<div class="modal fade" id="aiRecommendationModal" tabindex="-1" role="dialog" aria-labelledby="aiRecommendationModalLabel" aria-hidden="true">
+	<div class="modal-dialog" role="document">
+	  <div class="modal-content">
+		<div class="modal-header">
+		  <h5 class="modal-title" id="aiRecommendationModalLabel">AI Recommendation</h5>
+		  <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+			<span aria-hidden="true">&times;</span>
+		  </button>
+		</div>
+		<div class="modal-body">
+		  <p id="aiRecommendationText"></p>
+		</div>
+		<div class="modal-footer">
+		  <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+		</div>
+	  </div>
+	</div>
+  </div>
+  
+			<div class="row row-card-no-pd">
+				<div class="col-md-12">
+					<div class="card">
+						<div class="card-header">
+							<div class="card-head-row card-tools-still-right">
+								<h4 class="card-title">Users Geolocation</h4>
+								<div class="card-tools">
+									<button class="btn btn-icon btn-link btn-primary btn-xs"><span class="fa fa-angle-down"></span></button>
+									<button class="btn btn-icon btn-link btn-primary btn-xs btn-refresh-card"><span class="fa fa-sync-alt"></span></button>
+									<button class="btn btn-icon btn-link btn-primary btn-xs"><span class="fa fa-times"></span></button>
+								</div>
+							</div>
+							<p class="card-category">
+							Map of the distribution of users around the world</p>
+						</div>
+						<div class="card-body">
+							<div class="row">
+							  <div class="col-md-6">
+								<div class="table-responsive table-hover table-sales">
+								  <table class="table">
+									<!-- Table Headings -->
+									<thead>
+									  <tr>
+										<th>Cluster Name</th>
+										<th>Elevation</th>
+										<th>Affected Schools</th>
+										<th>Percentage</th>
+									  </tr>
+									</thead>
+									<tbody id="table-body">
+									  <!-- Dynamic rows will be inserted here -->
+									</tbody>
+									<!-- Total Row -->
+									<tfoot>
+									  <tr>
+										<td><strong>Total</strong></td>
+										<td></td> <!-- No data for this column -->
+										<td id="total-affected-schools"></td>
+										<td id="total-percentage"></td>
+									  </tr>
+									</tfoot>
+								  </table>
+								</div>
+							  </div>
+							  <div class="col-md-6">
+								<div class="mapcontainer" id="cesiumContainer" style="height: 500px;"></div>
+							  </div>
+               
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+
+{% endblock content %}
+
+<!-- Specific Page JS goes HERE  -->
+{% block javascripts %}
+
+	<!-- Atlantis DEMO methods, don't include it in your project! -->
+	<script src="/static/assets/js/setting-demo.js"></script>
+	<script src="/static/assets/js/demo.js"></script>
+	<script src="https://cesium.com/downloads/cesiumjs/releases/1.126/Build/Cesium/Cesium.js"></script>
+	<link href="https://cesium.com/downloads/cesiumjs/releases/1.126/Build/Cesium/Widgets/widgets.css" rel="stylesheet">
+	<script>
+  
+  // Your access token for Cesium Ion (replace with your actual token)
+  Cesium.Ion.defaultAccessToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJqdGkiOiJmYzM3OTMyYi1hZTRlLTQxMTMtYjg1OC0xN2VkMjEwMDU5MmMiLCJpZCI6MjgwMTk0LCJpYXQiOjE3NDA4NDI0ODN9.Ua8DKmGGi0xteUV7UI2aBmlzJkclxy4UWXGd5RnvWRA';
+
+// Initialize Cesium Viewer in the container
+const viewer = new Cesium.Viewer('cesiumContainer', {
+  terrain: Cesium.Terrain.fromWorldTerrain(), // This loads the terrain
+  imageryProviderViewModels: Cesium.createDefaultImageryProviderViewModels(), // Add default imagery options
+  selectedImageryProviderViewModel: Cesium.createDefaultImageryProviderViewModels()[0], // Set default imagery provider
+  shouldAnimate: true // Enable animations
+});
+
+// Add a lightweight globe layer (e.g., a simple imagery layer)
+const imageryLayer = viewer.imageryLayers.addImageryProvider(
+  new Cesium.UrlTemplateImageryProvider({
+    url : 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png' // Using OpenStreetMap tiles for a lightweight globe
+  })
+);
+
+viewer.camera.flyTo({
+  destination: Cesium.Cartesian3.fromDegrees(20, 0, 15000000), // Center over Africa
+  orientation: {
+    heading: Cesium.Math.toRadians(0.0),
+    pitch: Cesium.Math.toRadians(-90.0), // Look downward at the Earth
+    roll: 0.0
+  }
+});
+
+// Function to handle marker or cluster rendering based on your data
+function addMarkersToMap(clustersData) {
+  clustersData.forEach(cluster => {
+    const longitude = cluster.longitude;
+    const latitude = cluster.latitude;
+    
+    // Add a marker at the cluster's location
+    const point = Cesium.Cartesian3.fromDegrees(longitude, latitude);
+    
+    const marker = viewer.entities.add({
+      position: point,
+      point: {
+        pixelSize: 10,
+        color: Cesium.Color.RED,
+        outlineColor: Cesium.Color.WHITE,
+        outlineWidth: 3,
+      },
+      label: {
+        text: cluster.cluster, // Display the cluster name as a label
+        font: '14px sans-serif',
+        fillColor: Cesium.Color.WHITE,
+        backgroundColor: Cesium.Color.BLACK.withAlpha(0.7),
+        pixelOffset: new Cesium.Cartesian2(0, -20),
+      },
+    });
+  });
+}
+
+// Function to fetch GeoJSON data and populate the table
+function fetchGeojsonData() {
+  fetch('/geojson_data')
+    .then(response => response.json())
+    .then(data => {
+      // Fetch total number of schools
+      fetchSchoolsData(data);
+      // Add markers to map with the fetched cluster data
+      addMarkersToMap(data);
+	  const clusterSelect = document.getElementById("clusterSelect");
+      
+      // Populate the dropdown with cluster names
+      
+	   data.forEach(cluster => {
+        const option = document.createElement("option");
+        option.value = cluster.cluster; // set value to the cluster name
+        option.textContent = cluster.cluster; // set visible text to the cluster name
+        clusterSelect.appendChild(option);
+      });
+
+      // Set default cluster selection (first cluster if none is selected)
+      if (clusterSelect.options.length > 0) {
+        clusterSelect.selectedIndex = 1;  // Select the first cluster by default
+        fetchFailureRateData(clusterSelect.options[1].value); // Fetch failure rate data based on the default selection
+      }
+      document.querySelectorAll(".card-title")[0].textContent = clusterSelect.options.length -1;
+	    // Expected Cost
+      // Add event listener to fetch failure rate when the cluster selection changes
+      clusterSelect.addEventListener('change', (e) => {
+        fetchFailureRateData(e.target.value);
+      });
+
+    })
+    .catch(error => console.error('Error fetching GeoJSON data:', error));
+}
+
+// Function to fetch total schools data
+function fetchSchoolsData(clustersData) {
+  fetch('/allschools')  // Use your /allschools route here
+    .then(response => response.json())
+    .then(schoolsData => {
+      const totalSchools = schoolsData.length; // Length of the array will give total number of schools
+      fillTable(clustersData, totalSchools);
+    })
+    .catch(error => console.error('Error fetching schools data:', error));
+}
+
+// Function to populate the table with GeoJSON data and schools data
+function fillTable(clustersData, totalSchools) {
+  const tableBody = document.querySelector('#table-body');
+  tableBody.innerHTML = ''; // Clear any existing rows
+
+  let totalAffectedSchools = 0;
+
+  clustersData.forEach(cluster => {
+    const affectedSchools = cluster.affected_schools || 0;
+    const percentage = calculatePercentage(affectedSchools, totalSchools);
+
+    totalAffectedSchools += affectedSchools;
+document.querySelectorAll(".card-title")[1].textContent = totalAffectedSchools;  // Schools Covered
+    const row = document.createElement('tr');
+    row.innerHTML = `
+      <td>${cluster.cluster}</td>
+      <td>${cluster.elevation}</td>
+      <td>${affectedSchools}</td>
+      <td>${percentage}%</td>
+    `;
+    tableBody.appendChild(row);
+  });
+
+  // Calculate the total affected schools percentage
+  const totalPercentage = calculatePercentage(totalAffectedSchools, totalSchools);
+
+  // Update the Total row in the footer
+  document.getElementById('total-affected-schools').innerText = totalAffectedSchools;
+  document.getElementById('total-percentage').innerText = `${totalPercentage}%`;
+}
+
+// Function to calculate percentage
+function calculatePercentage(affectedSchools, totalSchools) {
+  return ((affectedSchools / totalSchools) * 100).toFixed(2);
+}
+// Function to open modal and show AI response in a beautiful format including Feature Importance
+function openAIRecommendationModal(aiResponse) {
+    // Get the modal body element
+    const modalBody = document.getElementById('aiRecommendationText');
+    
+    // Clear previous content
+    modalBody.innerHTML = '';
+
+    // Create an empty string to hold the HTML content
+    let content = '';
+
+    // Add each section as a collapsible card with title
+    if (aiResponse.antenna_inspection_alignment) {
+        content += createCollapsibleCard('Antenna Inspection and Alignment', aiResponse.antenna_inspection_alignment);
+    }
+
+    if (aiResponse.spectrum_utilization_management) {
+        content += createCollapsibleCard('Spectrum Utilization Management', aiResponse.spectrum_utilization_management);
+    }
+
+    if (aiResponse.humidity_management) {
+        content += createCollapsibleCard('Humidity Control', aiResponse.humidity_management);
+    }
+
+    if (aiResponse.temperature_management) {
+        content += createCollapsibleCard('Temperature Management', aiResponse.temperature_management);
+    }
+
+    if (aiResponse.best_practices) {
+        content += createCollapsibleCard('Best Practices', aiResponse.best_practices);
+    }
+
+    if (aiResponse.immediate_fixes) {
+        content += createCollapsibleCard('Immediate Fixes', aiResponse.immediate_fixes);
+    }
+
+    if (aiResponse.maintenance_actions) {
+        content += createCollapsibleCard('Maintenance Actions', aiResponse.maintenance_actions);
+    }
+
+    if (aiResponse.precautions) {
+        content += createCollapsibleCard('Precautions', aiResponse.precautions);
+    }
+
+    // Add Feature Importance table if available
+    if (aiResponse.feature_importance && aiResponse.feature_importance.length > 0) {
+        content += createFeatureImportanceTable(aiResponse.feature_importance);
+    }
+
+    // Insert the formatted HTML content into the modal body
+    modalBody.innerHTML = content;
+
+    // Show the modal using Bootstrap
+    $('#aiRecommendationModal').modal('show');
+}
+
+// Helper function to create a collapsible card for recommendations
+function createCollapsibleCard(title, content) {
+    // Split the content into list format
+    const formattedContent = formatContentToList(content);
+
+    return `
+        <div class="card mb-3">
+            <div class="card-header">
+                <h6 class="card-title">
+                    <a data-toggle="collapse" href="#collapse${title.replace(/\s+/g, '')}" role="button" aria-expanded="false" aria-controls="collapse${title.replace(/\s+/g, '')}">
+                        ${title}
+                    </a>
+                </h6>
+            </div>
+            <div id="collapse${title.replace(/\s+/g, '')}" class="collapse" data-parent="#aiRecommendationText">
+                <div class="card-body">
+                    <ul>${formattedContent}</ul>
+                </div>
+            </div>
+        </div>
+    `;
+}
+
+// Helper function to format content into a bullet-point list and make bold text
+function formatContentToList(content) {
+    // Match and replace the **bold text** with <strong> tag
+    content = content.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+    
+    // Split the content by new lines or paragraphs, and format as list items
+    const contentList = content.split('\n').map(item => {
+        return `<li>${item.trim()}</li>`;
+    }).join('');
+
+    return contentList;
+}
+
+// Helper function to create the Feature Importance table
+function createFeatureImportanceTable(featureImportance) {
+    let tableContent = '<h5 class="mt-4">Feature Importance</h5>';
+    tableContent += `
+        <table class="table table-bordered table-striped">
+            <thead>
+                <tr>
+                    <th>Feature</th>
+                    <th>Importance</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+    
+    featureImportance.forEach(feature => {
+        tableContent += `
+            <tr>
+                <td>${feature.Feature}</td>
+                <td>${feature.Importance.toFixed(4)}</td>
+            </tr>
+        `;
+    });
+
+    tableContent += `
+            </tbody>
+        </table>
+    `;
+    
+    return tableContent;
+}
+
+// Button event listener for AI recommendations
+
+function fetchFailureRateData(cluster) {
+  fetch(`/api/failure_rate?cluster_name=${cluster}`)  // Assuming API accepts cluster as query parameter
+    .then(response => response.json())
+    .then(failureRateData => {
+        console.log('Failure Rate Data for cluster', cluster, ':', failureRateData);
+
+        // Extract AI recommendations from the API response
+        const aiResponse = failureRateData.response_ai;
+
+        // Trigger the modal with the AI response
+		document.getElementById('ai-recommendations-btn').addEventListener('click', function () {
+            openAIRecommendationModal(aiResponse);
+
+});
+
+        // Continue plotting the failure rate predictions and actual data
+        const labelsFailureRate = getNextTenDays();
+        const predictedData = failureRateData.failure_rate_predictions;
+        const actualData = failureRateData.actual_failure_rate;
+
+        var ctxFailureRate = document.getElementById('failureRateChart').getContext('2d');
+        
+        var failureRateChart = new Chart(ctxFailureRate, {
+            type: 'line',
+            data: {
+                labels: labelsFailureRate,
+                datasets: [{
+                    label: 'Predicted Failure Rate',
+                    borderColor: '#ff6384',
+                    pointBackgroundColor: 'rgba(255, 99, 132, 0.6)',
+                    pointRadius: 0,
+                    backgroundColor: 'rgba(255, 99, 132, 0.4)',
+                    data: predictedData,
+                    fill: true,
+                    borderWidth: 2
+                },
+                {
+                    label: 'Actual Failure Rate',
+                    borderColor: '#36a2eb',
+                    pointBackgroundColor: 'rgba(54, 162, 235, 0.6)',
+                    pointRadius: 0,
+                    backgroundColor: 'rgba(54, 162, 235, 0.4)',
+                    data: actualData,
+                    fill: true,
+                    borderWidth: 2
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                legend: { display: true },
+                tooltips: { bodySpacing: 4, mode: "nearest", intersect: 0, position: "nearest" },
+                scales: {
+                    yAxes: [{
+                        ticks: { fontStyle: "500", beginAtZero: false, maxTicksLimit: 5, padding: 10 },
+                        gridLines: { drawTicks: false, display: false }
+                    }],
+                    xAxes: [{
+                        gridLines: { zeroLineColor: "transparent" },
+                        ticks: { padding: 10, fontStyle: "500" }
+                    }]
+                }
+            }
+        });
+    })
+    .catch(error => {
+        console.error('Error fetching failure rate data:', error);
+    });
+}
+
+// Call this function to fetch the data when the page loads
+fetchGeojsonData();
+	</script>
+
+{% endblock javascripts %}

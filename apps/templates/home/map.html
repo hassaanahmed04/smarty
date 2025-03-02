@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TVWS Signal Simulation - Africa (Leaflet)</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.7.1/dist/leaflet.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            margin: 0;
+            padding: 0;
+        }
+        #sidebar {
+            width: 250px;
+            padding: 10px;
+            background: #f4f4f4;
+            height: 100vh;
+            overflow-y: auto;
+        }
+        #map {
+            flex: 1;
+            height: 100vh;
+        }
+        input, select {
+            width: 100%;
+            margin: 5px 0;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="sidebar">
+        <h3>Filters</h3>
+
+        <label for="minSignal">Min Signal Strength (dBm):</label>
+        <input type="number" id="minSignal" value="-100">
+
+        <label for="maxSignal">Max Signal Strength (dBm):</label>
+        <input type="number" id="maxSignal" value="0">
+
+        <label for="interference">Interference Level:</label>
+        <select id="interference">
+            <option value="All">All</option>
+            <option value="Low">Low</option>
+            <option value="Medium">Medium</option>
+            <option value="High">High</option>
+        </select>
+
+        <label for="dataType">Select Data Type:</label>
+        <select id="dataType" multiple>
+            <option value="schools">Schools</option>
+            <option value="towers">Towers</option>
+            <option value="tvws">TVWS</option>
+            <option value="spectrum">Spectrum</option>
+            <option value="all">All</option>
+        </select>
+
+        <button onclick="applyFilters()">Apply Filters</button>
+    </div>
+
+    <div id="map"></div>
+
+    <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js"></script>
+    <script>
+        // Initialize Leaflet map
+        var map = L.map('map').setView([0, 0], 2); // Default view
+
+        // Add the CartoDB DarkMatter tile layer
+        var CartoDB_DarkMatter = L.tileLayer('https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+            subdomains: 'abcd',
+            maxZoom: 20
+        }).addTo(map);
+
+        var spectrumData = [];
+        var markersLayer = L.layerGroup().addTo(map);
+        var schoolsData = [];
+        var schoolsLayer = L.layerGroup().addTo(map); // Layer for school markers
+        var towersData = [];
+        var towersLayer = L.layerGroup().addTo(map); // Layer for tower markers
+
+        // Predefined TVWS locations
+        const locations = [
+            { name: "Lesotho, Lesotho", lat: -29.65557971538073, lon: 27.512340996047893 },
+            { name: "Lesotho, Lesotho", lat: -29.537868284843338, lon: 28.668014521889845 },
+            { name: "Lesotho, Lesotho", lat: -30.179441298099988, lon: 27.989827226337635 },
+            { name: "Lesotho, Lesotho", lat: -28.989643973734843, lon: 28.020362836923173 },
+        ];
+
+        var tvwsLayer = L.layerGroup().addTo(map); // Layer for TVWS markers
+
+        // Add TVWS base stations and coverage areas
+        function loadTVWS() {
+            locations.forEach(function(location) {
+                // Add marker for the TVWS base station
+                var marker = L.marker([location.lat, location.lon]).addTo(tvwsLayer);
+                marker.bindPopup(location.name);
+
+                // Define initial radius for the TVWS signal coverage
+                let initialRadius = 1000; // 1 km
+                let maxRadius = 30000; // 30 km
+                let radius = initialRadius;
+                let expanding = true;
+
+                // Create the coverage circle (coverage area)
+                var coverageCircle = L.circle([location.lat, location.lon], {
+                    color: 'blue',
+                    fillColor: 'blue',
+                    fillOpacity: 0.3,
+                    radius: radius
+                }).addTo(tvwsLayer);
+
+                // Animate the coverage circle's expansion and contraction
+                setInterval(function() {
+                    if (expanding) {
+                        radius += 2000; // Expand by 2 km
+                        if (radius >= maxRadius) expanding = false;
+                    } else {
+                        radius -= 2000; // Shrink by 2 km
+                        if (radius <= initialRadius) expanding = true;
+                    }
+                    coverageCircle.setRadius(radius); // Update the radius
+                }, 200); // Update every 200ms
+            });
+        }
+
+        // Load data for schools, towers, and spectrum
+        function loadSchools() {
+            fetch('/schools')
+                .then(response => response.json())
+                .then(data => {
+                    schoolsData = data;
+                    updateSchoolsMarkers();
+                })
+                .catch(error => console.error('Error loading school data:', error));
+        }
+
+        function loadTowers() {
+            fetch('/towers')
+                .then(response => response.json())
+                .then(data => {
+                    towersData = data;
+                    updateTowersMarkers();
+                })
+                .catch(error => console.error('Error loading tower data:', error));
+        }
+
+        function loadData() {
+            fetch('/data')
+                .then(response => response.json())
+                .then(data => {
+                    spectrumData = data;
+                    updateSpectrumMarkers();
+                })
+                .catch(error => console.error('Error loading data:', error));
+        }
+
+        // Update markers for schools
+        function updateSchoolsMarkers() {
+            schoolsLayer.clearLayers();
+
+            schoolsData.forEach(function (school) {
+                var marker = L.circleMarker([school.latitude, school.longitude], {
+                    color: "grey", radius: 1
+                }).addTo(schoolsLayer);
+
+                marker.bindPopup(`
+                    <b>School Name:</b> ${school.name}<br>
+                `);
+            });
+        }
+
+        // Update markers for towers
+        function updateTowersMarkers() {
+            towersLayer.clearLayers();
+
+            towersData.forEach(function (tower) {
+                var marker = L.marker([tower.latitude, tower.longitude], {
+                    icon: L.divIcon({className: 'tower-icon', html: '📡'})
+                }).addTo(towersLayer);
+
+                marker.bindPopup(`
+                    <b>Radio Type:</b> ${tower.type}<br>
+                    <b>Location:</b> Lat: ${tower.latitude}, Lon: ${tower.longitude}
+                `);
+            });
+        }
+
+        // Update markers for spectrum
+        function updateSpectrumMarkers() {
+            markersLayer.clearLayers();
+
+            var minSignal = parseFloat(document.getElementById("minSignal").value);
+            var maxSignal = parseFloat(document.getElementById("maxSignal").value);
+            var selectedInterference = document.getElementById("interference").value;
+
+            spectrumData.forEach(function (point) {
+                if (point.signal_strength < minSignal || point.signal_strength > maxSignal) return;
+                if (selectedInterference !== "All" && point.interference_level !== selectedInterference) return;
+
+                let color = point.interference_level === "High" ? 'red' :
+                            point.interference_level === "Medium" ? 'orange' : 'green';
+
+                var marker = L.circleMarker([point.latitude, point.longitude], {
+                    color: color,
+                    radius: 5,
+                    fillColor: color,
+                    fillOpacity: 0.7
+                }).addTo(markersLayer);
+
+                marker.bindPopup(`
+                    <b>Signal Strength:</b> ${point.signal_strength} dBm<br>
+                    <b>Interference Level:</b> ${point.interference_level}<br>
+                    <b>Available Channels:</b> ${point.available_channels}<br>
+                    <b>Occupied Channels:</b> ${point.occupied_channels}
+                `);
+            });
+        }
+
+        // Apply filters based on selected values
+        function applyFilters() {
+            // Clear all layers
+            markersLayer.clearLayers();
+            towersLayer.clearLayers();
+            schoolsLayer.clearLayers();
+            tvwsLayer.clearLayers();
+
+            var selectedTypes = Array.from(document.getElementById('dataType').selectedOptions)
+                                    .map(option => option.value);
+
+            // Apply filter logic based on selected data types
+            if (selectedTypes.includes('schools')) {
+                schoolsLayer.addTo(map);
+                updateSchoolsMarkers();
+            }
+
+            if (selectedTypes.includes('towers')) {
+                towersLayer.addTo(map);
+                updateTowersMarkers();
+            }
+
+            if (selectedTypes.includes('tvws')) {
+                tvwsLayer.addTo(map);
+                loadTVWS(); // Add TVWS markers if selected
+            }
+
+            if (selectedTypes.includes('spectrum')) {
+                markersLayer.addTo(map);
+                updateSpectrumMarkers();
+            }
+
+            if (selectedTypes.includes('all') || selectedTypes.length === 0) {
+                schoolsLayer.addTo(map);
+                towersLayer.addTo(map);
+                tvwsLayer.addTo(map);
+                markersLayer.addTo(map);
+                updateSchoolsMarkers();
+                updateTowersMarkers();
+                updateSpectrumMarkers();
+                loadTVWS(); // Add TVWS markers if "All" is selected
+            }
+        }
+
+        // Initialize data loading
+        loadSchools();
+        loadTowers();
+        loadData();
+        loadTVWS();
+    </script>
+</body>
+</html>
