@@ -17,3 +17,7 @@ Flask-Minify==0.37
 
 # flask_mysqldb
 # psycopg2-binary
+pandas
+numpy
+scikit-learn
+statsmodels
