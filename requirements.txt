@@ -19,5 +19,5 @@ Flask-Minify==0.37
 # psycopg2-binary
 pandas
 numpy
-scikit-learn
+scikit-learn==1.2.2
 statsmodels
